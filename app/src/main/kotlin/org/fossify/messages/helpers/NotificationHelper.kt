@@ -23,6 +23,7 @@ import org.fossify.messages.activities.ThreadActivity
 import org.fossify.messages.extensions.config
 import org.fossify.messages.extensions.shortcutHelper
 import org.fossify.messages.messaging.isShortCodeWithLetters
+import org.fossify.messages.receivers.CopyOtpReceiver
 import org.fossify.messages.receivers.DeleteSmsReceiver
 import org.fossify.messages.receivers.DirectReplyReceiver
 import org.fossify.messages.receivers.MarkAsReadReceiver
@@ -168,6 +169,26 @@ class NotificationHelper(private val context: Context) {
                 org.fossify.commons.R.drawable.ic_delete_vector,
                 context.getString(org.fossify.commons.R.string.delete),
                 deleteSmsPendingIntent
+            ).setChannelId(notificationChannelId)
+        }
+
+        val otp = extractOtp(body)
+        if (otp != null) {
+            val copyOtpIntent = Intent(context, CopyOtpReceiver::class.java).apply {
+                action = COPY_OTP
+                putExtra(THREAD_ID, threadId)
+                putExtra(OTP_CODE, otp)
+            }
+            val copyOtpPendingIntent = PendingIntent.getBroadcast(
+                context,
+                notificationId,
+                copyOtpIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            builder.addAction(
+                org.fossify.commons.R.drawable.ic_copy_vector,
+                context.getString(R.string.copy_code),
+                copyOtpPendingIntent
             ).setChannelId(notificationChannelId)
         }
 
