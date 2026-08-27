@@ -116,7 +116,11 @@ android {
         )
     }
 
-    namespace = project.property("APP_ID").toString()
+    // Intentionally decoupled from APP_ID. The 113 Kotlin sources, the generated R and
+    // BuildConfig classes, and the manifest's relative component names (".activities.MainActivity")
+    // all resolve against this namespace. Repointing it at APP_ID breaks every one of them.
+    // applicationId above is what gives the install its own distinct identity.
+    namespace = "org.fossify.messages"
 
     lint {
         checkReleaseBuilds = false
